@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">SimpleTranslater</string>
+
+    <string name="nav_drawer_open">Открыть nav drawer</string>
+    <string name="nav_drawer_close">Закрыть nav drawer</string>
+
+    <!-- labels of nav drawer -->
+    <string name="main_page">Главная</string>
+    <string name="history_page">История переводов</string>
+    <string name="favorites_page">Избранное</string>
+
+    <!-- toolbar titles -->
+    <string-array name="toolbar_titles">
+        <item>Главная</item>
+        <item>История переводов</item>
+        <item>Избранное</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="open_drawer">open drawer</string>
+    <string name="close_drawer">close drawer</string>
+
 </resources>
