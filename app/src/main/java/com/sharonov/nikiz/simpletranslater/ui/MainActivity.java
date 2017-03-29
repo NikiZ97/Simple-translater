@@ -1,7 +1,9 @@
-package com.sharonov.nikiz.simpletranslater;
+package com.sharonov.nikiz.simpletranslater.ui;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+
+import com.sharonov.nikiz.simpletranslater.R;
 
 public class MainActivity extends AppCompatActivity {
 
