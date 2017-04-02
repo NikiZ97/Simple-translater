@@ -5,11 +5,38 @@
     android:layout_height="match_parent"
     tools:context="com.sharonov.nikiz.simpletranslater.ui.fragments.TranslateFragment">
 
-    <Spinner
-        android:id="@+id/from_lang"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp">
-    </Spinner>
+        android:orientation="horizontal"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" >
+
+        <Spinner
+            android:id="@+id/from_lang"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="10dp" />
+
+        <ImageView
+            android:id="@+id/swipe_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/swipe_arrows"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            tools:ignore="ContentDescription" />
+
+        <Spinner
+            android:id="@+id/to_lang"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="20dp" />
+    </LinearLayout>
+
+
 
 </RelativeLayout>

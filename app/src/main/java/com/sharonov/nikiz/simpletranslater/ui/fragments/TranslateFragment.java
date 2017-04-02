@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.sharonov.nikiz.simpletranslater.R;
@@ -23,7 +24,13 @@ import butterknife.ButterKnife;
 public class TranslateFragment extends Fragment implements com.sharonov.nikiz.simpletranslater.ui.View {
 
     @BindView(R.id.from_lang)
-    Spinner spinner;
+    Spinner spinnerFrom;
+
+    @BindView(R.id.to_lang)
+    Spinner spinnerTo;
+
+    @BindView(R.id.swipe_img)
+    ImageView swipeImg;
 
     PresenterImpl presenter;
 
@@ -41,6 +48,8 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
         presenter = new PresenterImpl(this);
         presenter.getLanguages();
 
+        swipeImg.setOnClickListener(v -> swipeLanguages());
+
         return view;
     }
 
@@ -50,10 +59,17 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
         Map<String, String> map = list.getLangs();
         ArrayList<String> langs = new ArrayList<>(map.values());
 
-        /*map.values().forEach(langs::add);*/
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_spinner_item, langs);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+
+        spinnerFrom.setAdapter(adapter);
+        spinnerTo.setAdapter(adapter);
+    }
+
+    private void swipeLanguages() {
+        int firstSpinnerIndex = spinnerFrom.getSelectedItemPosition();
+        spinnerFrom.setSelection(spinnerTo.getSelectedItemPosition());
+        spinnerTo.setSelection(firstSpinnerIndex);
     }
 }
