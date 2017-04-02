@@ -9,6 +9,8 @@ import rx.Observable;
 
 public interface ApiInterface {
 
+    String API_KEY = "trnsl.1.1.20170315T174318Z.1b6c479f76583a42.19dbccee5df6a83518dd65ff33436533d4bcd55e";
+
     @GET("api/v1.5/tr.json/getLangs?")
     Observable<LanguagesList> getLanguageList(@Query("key") String apiKey, @Query("ui") String ui);
 }
