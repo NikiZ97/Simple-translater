@@ -12,11 +12,13 @@ import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.Subscriptions;
 
 public class PresenterImpl implements Presenter {
 
     private View view;
     private ApiInterface apiInterface = ApiModule.providesApiInterface();
+    private Subscription subscription = Subscriptions.empty();
 
     public PresenterImpl(View view) {
         this.view = view;
@@ -24,17 +26,24 @@ public class PresenterImpl implements Presenter {
 
     @Override
     public void getLanguages() {
-        Observable<LanguagesList> observable =
-                apiInterface.getLanguageList(ApiInterface.API_KEY, "ru")
+
+        if (!subscription.isUnsubscribed()) {
+            subscription.unsubscribe();
+        }
+        Observable<LanguagesList> listObs = apiInterface.getLanguageList(ApiInterface.API_KEY, "ru")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
+        listObs.subscribe(view::showLanguages, this::processError);
 
-        Subscription subscription = observable.subscribe(view::showLanguages, this::processError);
     }
 
     @Override
-    public void onEditTextChanged() {
-
+    public void getTranslate(String text, String languageTo) {
+        apiInterface.getTranslate(ApiInterface.API_KEY, text, languageTo)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(translatedText -> view.showTranslatedText(translatedText),
+                        this::processError);
     }
 
     @Override
@@ -49,10 +58,13 @@ public class PresenterImpl implements Presenter {
 
     @Override
     public void onStop() {
-
+        if (!subscription.isUnsubscribed()) {
+            subscription.unsubscribe();
+        }
     }
 
     private void processError(Throwable t) {
         Log.e("TAG", t.getLocalizedMessage(), t);
     }
+
 }

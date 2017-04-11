@@ -2,8 +2,10 @@ package com.sharonov.nikiz.simpletranslater.model.api;
 
 
 import com.sharonov.nikiz.simpletranslater.model.data.LanguagesList;
+import com.sharonov.nikiz.simpletranslater.model.data.TranslatedText;
 
 import retrofit.http.GET;
+import retrofit.http.POST;
 import retrofit.http.Query;
 import rx.Observable;
 
@@ -13,4 +15,9 @@ public interface ApiInterface {
 
     @GET("api/v1.5/tr.json/getLangs?")
     Observable<LanguagesList> getLanguageList(@Query("key") String apiKey, @Query("ui") String ui);
+
+    @POST("v1.5/tr.json/translate?")
+    Observable<TranslatedText> getTranslate(@Query("key") String apiKey, @Query("text") String text,
+                                            @Query("lang") String language);
+
 }

@@ -6,6 +6,7 @@
     tools:context="com.sharonov.nikiz.simpletranslater.ui.fragments.TranslateFragment">
 
     <LinearLayout
+        android:id="@+id/lang_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -14,7 +15,7 @@
 
         <Spinner
             android:id="@+id/from_lang"
-            android:layout_width="150dp"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginStart="10dp" />
@@ -31,12 +32,38 @@
 
         <Spinner
             android:id="@+id/to_lang"
-            android:layout_width="150dp"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:layout_marginTop="20dp" />
+
+
     </LinearLayout>
 
+    <View
+        android:id="@+id/separate_line"
+        android:layout_below="@id/lang_layout"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="15dp"
+        android:background="@android:color/darker_gray" />
 
+    <EditText
+        android:id="@+id/input_text"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_below="@id/lang_layout"
+        android:layout_marginTop="30dp"
+        android:hint="@string/input_text"
+        android:gravity="start"
+        style="Widget.AppCompat.EditText"/>
+
+    <TextView
+        android:id="@+id/tvTranslatedText"
+        android:layout_below="@id/input_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        tools:text="translated text"/>
 
 </RelativeLayout>

@@ -3,19 +3,29 @@ package com.sharonov.nikiz.simpletranslater.ui.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.sharonov.nikiz.simpletranslater.R;
 import com.sharonov.nikiz.simpletranslater.model.data.LanguagesList;
+import com.sharonov.nikiz.simpletranslater.model.data.TranslatedText;
 import com.sharonov.nikiz.simpletranslater.presenter.PresenterImpl;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,10 +42,19 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
     @BindView(R.id.swipe_img)
     ImageView swipeImg;
 
+    @BindView(R.id.input_text)
+    EditText inputText;
+
+    @BindView(R.id.tvTranslatedText)
+    TextView translatedText;
+
     PresenterImpl presenter;
 
+    private List<String> langsKeys;
 
-    public TranslateFragment() {}
+
+    public TranslateFragment() {
+    }
 
 
     @Override
@@ -50,6 +69,48 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
 
         swipeImg.setOnClickListener(v -> swipeLanguages());
 
+
+
+        //setOnSpinnerItemClick();
+
+        /*RxTextView.textChanges(inputText)
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .flatMap(s -> presenter.getTranslate(s.toString(), "ru"))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::showTranslatedText, this::processError);*/
+
+        inputText.addTextChangedListener(new TextWatcher() {
+
+            private Timer timer=new Timer();
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (timer != null) {
+                    timer.cancel();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                timer.cancel();
+                timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (!TextUtils.isEmpty(editable.toString())) {
+                            presenter.getTranslate(editable.toString(), "ru");
+                        }
+                    }
+                }, 1000);
+            }
+        });
+
         return view;
     }
 
@@ -58,6 +119,7 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
 
         Map<String, String> map = list.getLangs();
         ArrayList<String> langs = new ArrayList<>(map.values());
+        langsKeys = new ArrayList<>(map.keySet());
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_spinner_item, langs);
@@ -67,9 +129,19 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
         spinnerTo.setAdapter(adapter);
     }
 
+
+    @Override
+    public void showTranslatedText(TranslatedText text) {
+        translatedText.setText(text.getText().get(0));
+    }
+
     private void swipeLanguages() {
         int firstSpinnerIndex = spinnerFrom.getSelectedItemPosition();
         spinnerFrom.setSelection(spinnerTo.getSelectedItemPosition());
         spinnerTo.setSelection(firstSpinnerIndex);
+    }
+
+    private void processError(Throwable t) {
+        Log.e("TAG", t.getLocalizedMessage(), t);
     }
 }
