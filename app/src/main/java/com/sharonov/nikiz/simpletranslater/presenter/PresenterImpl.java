@@ -42,7 +42,7 @@ public class PresenterImpl implements Presenter {
         apiInterface.getTranslate(ApiInterface.API_KEY, text, languageTo)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(translatedText -> view.showTranslatedText(translatedText),
+                .subscribe(translatedText -> view.showTranslatedText(translatedText.getText().get(0)),
                         this::processError);
     }
 

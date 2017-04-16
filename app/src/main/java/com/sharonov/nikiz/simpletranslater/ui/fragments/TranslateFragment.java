@@ -4,7 +4,6 @@ package com.sharonov.nikiz.simpletranslater.ui.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,7 +17,6 @@ import android.widget.TextView;
 
 import com.sharonov.nikiz.simpletranslater.R;
 import com.sharonov.nikiz.simpletranslater.model.data.LanguagesList;
-import com.sharonov.nikiz.simpletranslater.model.data.TranslatedText;
 import com.sharonov.nikiz.simpletranslater.presenter.PresenterImpl;
 
 import java.util.ArrayList;
@@ -70,24 +68,11 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
         swipeImg.setOnClickListener(v -> swipeLanguages());
 
 
-
-        //setOnSpinnerItemClick();
-
-        /*RxTextView.textChanges(inputText)
-                .debounce(500, TimeUnit.MILLISECONDS)
-                .flatMap(s -> presenter.getTranslate(s.toString(), "ru"))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::showTranslatedText, this::processError);*/
-
         inputText.addTextChangedListener(new TextWatcher() {
 
-            private Timer timer=new Timer();
-
+            Timer timer = new Timer();
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -97,15 +82,13 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
+            public void afterTextChanged(final Editable editable) {
                 timer.cancel();
                 timer = new Timer();
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        if (!TextUtils.isEmpty(editable.toString())) {
-                            presenter.getTranslate(editable.toString(), "ru");
-                        }
+                        presenter.getTranslate(editable.toString(), "en-ru");
                     }
                 }, 1000);
             }
@@ -131,8 +114,8 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
 
 
     @Override
-    public void showTranslatedText(TranslatedText text) {
-        translatedText.setText(text.getText().get(0));
+    public void showTranslatedText(String text) {
+        translatedText.setText(text);
     }
 
     private void swipeLanguages() {
@@ -144,4 +127,5 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
     private void processError(Throwable t) {
         Log.e("TAG", t.getLocalizedMessage(), t);
     }
+
 }

@@ -20,4 +20,12 @@ public class TranslatedText {
     public String getLang() {
         return lang;
     }
+
+    @Override
+    public String toString() {
+        return "TranslatedText{" +
+                "text=" + text.get(0) +
+                ", lang='" + lang + '\'' +
+                '}';
+    }
 }

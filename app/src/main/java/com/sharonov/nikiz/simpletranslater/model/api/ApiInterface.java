@@ -16,7 +16,7 @@ public interface ApiInterface {
     @GET("api/v1.5/tr.json/getLangs?")
     Observable<LanguagesList> getLanguageList(@Query("key") String apiKey, @Query("ui") String ui);
 
-    @POST("v1.5/tr.json/translate?")
+    @POST("api/v1.5/tr.json/translate?")
     Observable<TranslatedText> getTranslate(@Query("key") String apiKey, @Query("text") String text,
                                             @Query("lang") String language);
 
