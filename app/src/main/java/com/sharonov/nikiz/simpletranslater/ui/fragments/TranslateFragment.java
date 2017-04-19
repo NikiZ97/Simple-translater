@@ -48,7 +48,7 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
 
     PresenterImpl presenter;
 
-    private List<String> langsKeys;
+    private String langTo = "";
 
 
     public TranslateFragment() {
@@ -88,7 +88,7 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        presenter.getTranslate(editable.toString(), "en-ru");
+                        presenter.getTranslate(editable.toString(), spinnerTo.getSelectedItem().toString());
                     }
                 }, 1000);
             }
@@ -102,10 +102,10 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
 
         Map<String, String> map = list.getLangs();
         ArrayList<String> langs = new ArrayList<>(map.values());
-        langsKeys = new ArrayList<>(map.keySet());
+        List<String> langsKeys = new ArrayList<>(map.keySet());
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_spinner_item, langs);
+                android.R.layout.simple_spinner_item, langsKeys);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         spinnerFrom.setAdapter(adapter);
@@ -127,5 +127,4 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
     private void processError(Throwable t) {
         Log.e("TAG", t.getLocalizedMessage(), t);
     }
-
 }
