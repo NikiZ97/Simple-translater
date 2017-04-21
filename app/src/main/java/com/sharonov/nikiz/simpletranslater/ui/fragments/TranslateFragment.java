@@ -46,6 +46,9 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
     @BindView(R.id.tvTranslatedText)
     TextView translatedText;
 
+    @BindView(R.id.star)
+    ImageView starImg;
+
     PresenterImpl presenter;
 
     private String langTo = "";
@@ -94,6 +97,8 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
             }
         });
 
+        starImg.setOnClickListener(v -> presenter.onStarred());
+
         return view;
     }
 
@@ -116,6 +121,7 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
     @Override
     public void showTranslatedText(String text) {
         translatedText.setText(text);
+        starImg.setVisibility(View.VISIBLE);
     }
 
     private void swipeLanguages() {

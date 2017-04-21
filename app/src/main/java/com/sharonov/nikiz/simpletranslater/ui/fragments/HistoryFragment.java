@@ -2,6 +2,7 @@ package com.sharonov.nikiz.simpletranslater.ui.fragments;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,34 +14,26 @@ import android.view.ViewGroup;
 import com.sharonov.nikiz.simpletranslater.R;
 import com.sharonov.nikiz.simpletranslater.model.data.HistoryElement;
 import com.sharonov.nikiz.simpletranslater.model.data.LanguagesList;
-import com.sharonov.nikiz.simpletranslater.presenter.PresenterImpl;
-import com.sharonov.nikiz.simpletranslater.ui.activities.MainActivity;
 import com.sharonov.nikiz.simpletranslater.ui.other.HistoryAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends Fragment implements com.sharonov.nikiz.simpletranslater.ui.View{
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
-    private List<HistoryElement> historyElements = new ArrayList<>();
+    private Realm realm;
 
     public HistoryFragment() {}
 
-    private PresenterImpl presenter;
-    private com.sharonov.nikiz.simpletranslater.ui.View view = new com.sharonov.nikiz.simpletranslater.ui.View() {
-        @Override
-        public void showLanguages(LanguagesList list) {}
-
-        @Override
-        public void showTranslatedText(String text) {}
-    };
-
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        realm = Realm.getDefaultInstance();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,22 +43,32 @@ public class HistoryFragment extends Fragment {
 
         ButterKnife.bind(this, result);
 
-        HistoryAdapter historyAdapter = new HistoryAdapter(historyElements);
-
-        presenter = new PresenterImpl(view);
-
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(manager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(historyAdapter);
-
-        prepareElements();
-
         return result;
     }
 
-    private void prepareElements() {
-        presenter.onAddedToHistory(historyElements);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(new HistoryAdapter(realm.where(HistoryElement.class).findAll()));
     }
 
+    // refactor this
+    @Override
+    public void showLanguages(LanguagesList list) {
+
+    }
+
+    @Override
+    public void showTranslatedText(String text) {
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        realm.close();
+    }
 }

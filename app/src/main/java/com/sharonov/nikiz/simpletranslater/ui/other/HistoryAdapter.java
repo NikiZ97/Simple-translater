@@ -9,17 +9,20 @@ import android.widget.TextView;
 import com.sharonov.nikiz.simpletranslater.R;
 import com.sharonov.nikiz.simpletranslater.model.data.HistoryElement;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 
-public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.CustomViewHolder> {
+public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.CustomViewHolder>
+    implements RealmChangeListener {
 
-    private List<HistoryElement> historyElements;
+    //private List<HistoryElement> historyElements;
+    private final RealmResults<HistoryElement> elements;
 
-    public HistoryAdapter(List<HistoryElement> historyElements) {
-        this.historyElements = historyElements;
+    public HistoryAdapter(RealmResults<HistoryElement> elements) {
+        this.elements = elements;
+        elements.addChangeListener(this);
     }
 
     @Override
@@ -31,14 +34,19 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.CustomVi
 
     @Override
     public void onBindViewHolder(HistoryAdapter.CustomViewHolder holder, int position) {
-        HistoryElement element = historyElements.get(position);
-        holder.originalText.setText(element.getOriginalText());
-        holder.translatedText.setText(element.getTranslatedText());
+        holder.originalText.setText(elements.get(position).getOriginalText());
+        holder.translatedText.setText(elements.get(position).getTranslatedText());
     }
 
     @Override
     public int getItemCount() {
-        return historyElements.size();
+        return elements.size();
+    }
+
+
+    @Override
+    public void onChange(Object element) {
+        notifyDataSetChanged();
     }
 
     class CustomViewHolder extends RecyclerView.ViewHolder {

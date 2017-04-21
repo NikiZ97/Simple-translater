@@ -9,8 +9,7 @@ import com.sharonov.nikiz.simpletranslater.model.data.HistoryElement;
 import com.sharonov.nikiz.simpletranslater.model.data.LanguagesList;
 import com.sharonov.nikiz.simpletranslater.ui.View;
 
-import java.util.List;
-
+import io.realm.Realm;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -22,10 +21,11 @@ public class PresenterImpl implements Presenter {
     private View view;
     private ApiInterface apiInterface = ApiModule.providesApiInterface();
     private Subscription subscription = Subscriptions.empty();
-    private HistoryElement element = new HistoryElement();
+    private Realm realm;
 
     public PresenterImpl(View view) {
         this.view = view;
+        realm = Realm.getDefaultInstance();
     }
 
     @Override
@@ -47,17 +47,9 @@ public class PresenterImpl implements Presenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(translatedText -> {
+                    addToHistory(text, translatedText.getText().get(0));
                     view.showTranslatedText(translatedText.getText().get(0));
-                    element.setOriginalText(text);
-                    element.setTranslatedText(translatedText.getText().get(0));
-
-
                 }, this::processError);
-    }
-
-    @Override
-    public void onAddedToHistory(List<HistoryElement> historyElements) {
-        historyElements.add(element);
     }
 
     @Override
@@ -70,10 +62,18 @@ public class PresenterImpl implements Presenter {
         if (!subscription.isUnsubscribed()) {
             subscription.unsubscribe();
         }
+        realm.close();
     }
 
     private void processError(Throwable t) {
         Log.e("TAG", t.getLocalizedMessage(), t);
     }
 
+    private void addToHistory(String text, String translatedText) {
+        realm.beginTransaction();
+        HistoryElement element = realm.createObject(HistoryElement.class);
+        element.setOriginalText(text);
+        element.setTranslatedText(translatedText);
+        realm.commitTransaction();
+    }
 }
