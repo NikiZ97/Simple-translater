@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,9 +127,5 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
         int firstSpinnerIndex = spinnerFrom.getSelectedItemPosition();
         spinnerFrom.setSelection(spinnerTo.getSelectedItemPosition());
         spinnerTo.setSelection(firstSpinnerIndex);
-    }
-
-    private void processError(Throwable t) {
-        Log.e("TAG", t.getLocalizedMessage(), t);
     }
 }

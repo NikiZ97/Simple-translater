@@ -6,11 +6,9 @@ import android.util.Log;
 import com.sharonov.nikiz.simpletranslater.model.api.ApiInterface;
 import com.sharonov.nikiz.simpletranslater.model.api.ApiModule;
 import com.sharonov.nikiz.simpletranslater.model.data.HistoryElement;
-import com.sharonov.nikiz.simpletranslater.model.data.LanguagesList;
 import com.sharonov.nikiz.simpletranslater.ui.View;
 
 import io.realm.Realm;
-import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -34,10 +32,10 @@ public class PresenterImpl implements Presenter {
         if (!subscription.isUnsubscribed()) {
             subscription.unsubscribe();
         }
-        Observable<LanguagesList> listObs = apiInterface.getLanguageList(ApiInterface.API_KEY, "ru")
+        apiInterface.getLanguageList(ApiInterface.API_KEY, "ru")
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-        listObs.subscribe(view::showLanguages, this::processError);
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(view::showLanguages, this::processError);
 
     }
 
@@ -53,8 +51,8 @@ public class PresenterImpl implements Presenter {
     }
 
     @Override
-    public void onStarred() {
-
+    public HistoryElement onStarred() {
+        return realm.where(HistoryElement.class).findAll().last();
     }
 
     @Override

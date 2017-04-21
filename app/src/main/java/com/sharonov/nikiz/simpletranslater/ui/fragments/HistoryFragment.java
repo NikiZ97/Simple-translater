@@ -13,14 +13,13 @@ import android.view.ViewGroup;
 
 import com.sharonov.nikiz.simpletranslater.R;
 import com.sharonov.nikiz.simpletranslater.model.data.HistoryElement;
-import com.sharonov.nikiz.simpletranslater.model.data.LanguagesList;
 import com.sharonov.nikiz.simpletranslater.ui.other.HistoryAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 
-public class HistoryFragment extends Fragment implements com.sharonov.nikiz.simpletranslater.ui.View{
+public class HistoryFragment extends Fragment {
 
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
@@ -53,17 +52,6 @@ public class HistoryFragment extends Fragment implements com.sharonov.nikiz.simp
         recyclerView.setLayoutManager(manager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(new HistoryAdapter(realm.where(HistoryElement.class).findAll()));
-    }
-
-    // refactor this
-    @Override
-    public void showLanguages(LanguagesList list) {
-
-    }
-
-    @Override
-    public void showTranslatedText(String text) {
-
     }
 
     @Override
