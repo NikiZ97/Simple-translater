@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.sharonov.nikiz.simpletranslater.R;
+import com.sharonov.nikiz.simpletranslater.model.data.HistoryElement;
 import com.sharonov.nikiz.simpletranslater.model.data.LanguagesList;
 import com.sharonov.nikiz.simpletranslater.presenter.PresenterImpl;
 
@@ -26,6 +27,7 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 
 public class TranslateFragment extends Fragment implements com.sharonov.nikiz.simpletranslater.ui.View {
@@ -50,7 +52,7 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
 
     PresenterImpl presenter;
 
-    private String langTo = "";
+    List<String> langsKeys;
 
 
     public TranslateFragment() {
@@ -67,10 +69,13 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
         presenter = new PresenterImpl(this);
         presenter.getLanguages();
 
+
+
         swipeImg.setOnClickListener(v -> swipeLanguages());
 
 
         inputText.addTextChangedListener(new TextWatcher() {
+
 
             Timer timer = new Timer();
             @Override
@@ -84,13 +89,18 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
             }
 
             @Override
-            public void afterTextChanged(final Editable editable) {
+            public void afterTextChanged(Editable editable) {
                 timer.cancel();
                 timer = new Timer();
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        presenter.getTranslate(editable.toString(), spinnerTo.getSelectedItem().toString());
+                        Realm realm = Realm.getDefaultInstance();
+                        if (realm.where(HistoryElement.class).findAll().contains(editable)) {
+                            showTranslatedText(editable.toString());
+                        }
+                        int position = spinnerTo.getSelectedItemPosition();
+                        presenter.getTranslate(editable.toString(), langsKeys.get(position));
                     }
                 }, 1000);
             }
@@ -106,10 +116,10 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
 
         Map<String, String> map = list.getLangs();
         ArrayList<String> langs = new ArrayList<>(map.values());
-        List<String> langsKeys = new ArrayList<>(map.keySet());
+        langsKeys = new ArrayList<>(map.keySet());
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_spinner_item, langsKeys);
+                android.R.layout.simple_spinner_item, langs);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         spinnerFrom.setAdapter(adapter);

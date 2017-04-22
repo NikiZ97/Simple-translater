@@ -13,5 +13,4 @@ public class LanguagesList {
     public Map<String, String> getLangs() {
         return langs;
     }
-
 }

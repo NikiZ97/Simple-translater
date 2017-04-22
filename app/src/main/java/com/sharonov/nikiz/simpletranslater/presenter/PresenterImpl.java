@@ -36,7 +36,6 @@ public class PresenterImpl implements Presenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(view::showLanguages, this::processError);
-
     }
 
     @Override
@@ -67,6 +66,28 @@ public class PresenterImpl implements Presenter {
 
     private void processError(Throwable t) {
         Log.e("TAG", t.getLocalizedMessage(), t);
+    }
+
+    private String saveToRealm(HistoryElement element) {
+        realm = Realm.getDefaultInstance();
+        realm.executeTransaction(transaction -> {
+            HistoryElement historyElement = findInRealm(transaction, element.getOriginalText(),
+                    element.getTranslatedText());
+            if (historyElement == null) {
+                historyElement = transaction.createObject(HistoryElement.class, element.getOriginalText());
+            }
+            historyElement.setOriginalText(element.getOriginalText());
+            historyElement.setTranslatedText(element.getTranslatedText());
+        });
+        realm.close();
+        return element.getOriginalText();
+    }
+
+    private HistoryElement findInRealm(Realm realm, String original, String translated) {
+        return realm.where(HistoryElement.class)
+                .equalTo("originalText", original)
+                .equalTo("translatedText", translated)
+                .findFirst();
     }
 
     private void addToHistory(String text, String translatedText) {
