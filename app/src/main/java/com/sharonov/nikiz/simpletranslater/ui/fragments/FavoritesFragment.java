@@ -10,26 +10,26 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.sharonov.nikiz.simpletranslater.R;
+import com.sharonov.nikiz.simpletranslater.model.data.HistoryElement;
 import com.sharonov.nikiz.simpletranslater.model.data.LanguagesList;
 import com.sharonov.nikiz.simpletranslater.presenter.Presenter;
 import com.sharonov.nikiz.simpletranslater.presenter.PresenterImpl;
-import com.sharonov.nikiz.simpletranslater.ui.other.FavoritesAdapter;
+import com.sharonov.nikiz.simpletranslater.ui.other.HistoryAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 public class FavoritesFragment extends Fragment implements com.sharonov.nikiz.simpletranslater.ui.View{
 
     @BindView(R.id.recycler_view_fav)
     RecyclerView recyclerView;
 
-    @BindView(R.id.star)
-    ImageView imageView;
+    private Presenter presenter;
 
-    Presenter presenter;
+    private Realm realm;
 
     public FavoritesFragment() {}
 
@@ -44,6 +44,8 @@ public class FavoritesFragment extends Fragment implements com.sharonov.nikiz.si
                              Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_favorites, container, false);
 
+        realm = Realm.getDefaultInstance();
+
         ButterKnife.bind(this, result);
 
         return result;
@@ -52,12 +54,11 @@ public class FavoritesFragment extends Fragment implements com.sharonov.nikiz.si
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
         RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(manager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(new FavoritesAdapter(presenter.onStarred()));
+        recyclerView.setAdapter(new HistoryAdapter(realm.where(HistoryElement.class)
+                .equalTo("isStarred", true).findAll()));
     }
 
     // refactor this!

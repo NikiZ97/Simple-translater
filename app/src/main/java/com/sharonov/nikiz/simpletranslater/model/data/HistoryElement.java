@@ -6,6 +6,7 @@ import io.realm.RealmObject;
 public class HistoryElement extends RealmObject {
     private String originalText;
     private String translatedText;
+    private boolean isStarred;
 
     public HistoryElement() {}
 
@@ -28,5 +29,13 @@ public class HistoryElement extends RealmObject {
 
     public void setTranslatedText(String translatedText) {
         this.translatedText = translatedText;
+    }
+
+    public boolean isStarred() {
+        return isStarred;
+    }
+
+    public void setStarred(boolean starred) {
+        isStarred = starred;
     }
 }

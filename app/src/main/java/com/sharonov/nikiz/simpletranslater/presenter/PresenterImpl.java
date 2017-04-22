@@ -51,8 +51,10 @@ public class PresenterImpl implements Presenter {
     }
 
     @Override
-    public HistoryElement onStarred() {
-        return realm.where(HistoryElement.class).findAll().last();
+    public void onStarred() {
+        realm.beginTransaction();
+        realm.where(HistoryElement.class).findAll().last().setStarred(true);
+        realm.commitTransaction();
     }
 
     @Override
