@@ -17,7 +17,6 @@ import io.realm.RealmResults;
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.CustomViewHolder>
     implements RealmChangeListener {
 
-    //private List<HistoryElement> historyElements;
     private final RealmResults<HistoryElement> elements;
 
     public HistoryAdapter(RealmResults<HistoryElement> elements) {

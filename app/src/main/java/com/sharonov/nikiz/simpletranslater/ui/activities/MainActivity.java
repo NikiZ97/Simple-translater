@@ -1,7 +1,9 @@
 package com.sharonov.nikiz.simpletranslater.ui.activities;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -10,9 +12,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -43,8 +45,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String HISTORY = "history";
     private static final String STARRED = "starred";
     private static String CURRENT = HOME;
+
+    // current nav menu item
     private static int NAV_ITEM_INDEX = 0;
 
+    // array of toolbar titles
     private String[] toolbarTitles;
 
     @Override
@@ -55,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
         // initialize Realm
         Realm.init(getApplicationContext());
 
-        // create your Realm configuration
         RealmConfiguration config = new RealmConfiguration.
                 Builder().
                 deleteRealmIfMigrationNeeded().
@@ -72,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
         loadHeaderImage();
 
+        // initializing nav menu
         setUpNavigationView();
 
         if (savedInstanceState == null) {
@@ -81,6 +86,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternetConnection();
+    }
+
+    /**
+     * This method loads image in header using Glide library
+     */
     private void loadHeaderImage() {
         Glide.with(this)
                 .load(R.drawable.header_bg)
@@ -89,37 +103,37 @@ public class MainActivity extends AppCompatActivity {
                 .into(imgHeaderBackground);
     }
 
+    /**
+     * This method sets up navigation view
+     */
     private void setUpNavigationView() {
-        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.nav_main:
-                        NAV_ITEM_INDEX = 0;
-                        CURRENT = HOME;
-                        break;
-                    case R.id.nav_history:
-                        NAV_ITEM_INDEX = 1;
-                        CURRENT = HISTORY;
-                        break;
-                    case R.id.nav_starred:
-                        NAV_ITEM_INDEX = 2;
-                        CURRENT = STARRED;
-                        break;
-                    default:
-                        NAV_ITEM_INDEX = 0;
-                }
-
-                if (item.isChecked())
-                    item.setChecked(false);
-                else
-                    item.setChecked(true);
-                item.setChecked(true);
-
-                loadHomeFragment();
-
-                return true;
+        navView.setNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.nav_main:
+                    NAV_ITEM_INDEX = 0;
+                    CURRENT = HOME;
+                    break;
+                case R.id.nav_history:
+                    NAV_ITEM_INDEX = 1;
+                    CURRENT = HISTORY;
+                    break;
+                case R.id.nav_starred:
+                    NAV_ITEM_INDEX = 2;
+                    CURRENT = STARRED;
+                    break;
+                default:
+                    NAV_ITEM_INDEX = 0;
             }
+
+            if (item.isChecked())
+                item.setChecked(false);
+            else
+                item.setChecked(true);
+            item.setChecked(true);
+
+            loadHomeFragment();
+
+            return true;
         });
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
@@ -164,6 +178,9 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle(toolbarTitles[NAV_ITEM_INDEX]);
     }
 
+    /**
+     * This method replaces fragments
+     */
     private void setFragment() {
         Fragment fragment = getHomeFragment();
         FragmentTransaction transaction = getSupportFragmentManager()
@@ -173,6 +190,10 @@ public class MainActivity extends AppCompatActivity {
         transaction.commitAllowingStateLoss();
     }
 
+    /**
+     * This method returns the desired fragment
+     * @return desired fragment
+     */
     private Fragment getHomeFragment() {
         switch(NAV_ITEM_INDEX) {
             case 0:
@@ -201,5 +222,32 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         super.onBackPressed();
+    }
+
+    /**
+     * This method notifies the absence of an Internet connection
+     */
+    private void checkInternetConnection() {
+        if (!isNetworkStatusAvailable(this)) {
+            Toast.makeText(this, "Check your Internet connection", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * This method check if internet connection available
+     * @param context - context
+     * @return false if there is not internet connection, else - true
+     */
+    public static boolean isNetworkStatusAvailable(Context context) {
+        ConnectivityManager con = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (con != null) {
+            NetworkInfo info = con.getActiveNetworkInfo();
+            if (info != null) {
+                if (info.isConnected())
+                    return true;
+            }
+        }
+        return false;
     }
 }

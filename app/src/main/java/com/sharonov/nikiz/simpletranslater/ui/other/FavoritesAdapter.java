@@ -13,7 +13,7 @@ import com.sharonov.nikiz.simpletranslater.model.data.HistoryElement;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.CustomViewHolder> {
+class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.CustomViewHolder> {
 
     private final HistoryElement element;
 

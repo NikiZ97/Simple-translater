@@ -55,6 +55,7 @@
         android:layout_below="@id/lang_layout"
         android:layout_marginTop="30dp"
         android:hint="@string/input_text"
+        android:textSize="16sp"
         android:gravity="start"
         style="Widget.AppCompat.EditText"/>
 

@@ -13,21 +13,16 @@ import android.view.ViewGroup;
 
 import com.sharonov.nikiz.simpletranslater.R;
 import com.sharonov.nikiz.simpletranslater.model.data.HistoryElement;
-import com.sharonov.nikiz.simpletranslater.model.data.LanguagesList;
-import com.sharonov.nikiz.simpletranslater.presenter.Presenter;
-import com.sharonov.nikiz.simpletranslater.presenter.PresenterImpl;
 import com.sharonov.nikiz.simpletranslater.ui.other.HistoryAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 
-public class FavoritesFragment extends Fragment implements com.sharonov.nikiz.simpletranslater.ui.View{
+public class FavoritesFragment extends Fragment {
 
     @BindView(R.id.recycler_view_fav)
     RecyclerView recyclerView;
-
-    private Presenter presenter;
 
     private Realm realm;
 
@@ -36,15 +31,13 @@ public class FavoritesFragment extends Fragment implements com.sharonov.nikiz.si
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new PresenterImpl(this);
+        realm = Realm.getDefaultInstance();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_favorites, container, false);
-
-        realm = Realm.getDefaultInstance();
 
         ButterKnife.bind(this, result);
 
@@ -61,10 +54,9 @@ public class FavoritesFragment extends Fragment implements com.sharonov.nikiz.si
                 .equalTo("isStarred", true).findAll()));
     }
 
-    // refactor this!
     @Override
-    public void showLanguages(LanguagesList list) {}
-
-    @Override
-    public void showTranslatedText(String text) {}
+    public void onDestroy() {
+        super.onDestroy();
+        realm.close();
+    }
 }

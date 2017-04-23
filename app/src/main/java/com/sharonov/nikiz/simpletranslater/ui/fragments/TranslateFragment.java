@@ -16,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sharonov.nikiz.simpletranslater.R;
-import com.sharonov.nikiz.simpletranslater.model.data.HistoryElement;
 import com.sharonov.nikiz.simpletranslater.model.data.LanguagesList;
 import com.sharonov.nikiz.simpletranslater.presenter.PresenterImpl;
 
@@ -28,32 +27,51 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.Realm;
 
 
 public class TranslateFragment extends Fragment implements com.sharonov.nikiz.simpletranslater.ui.View {
 
+    /**
+     * Spinner for choosing the language from which
+     * the translation will be made
+     */
     @BindView(R.id.from_lang)
     Spinner spinnerFrom;
 
+    /**
+     * Spinner for choosing the language to be translated into
+     */
     @BindView(R.id.to_lang)
     Spinner spinnerTo;
 
+    /**
+     * The language swipe image
+     */
     @BindView(R.id.swipe_img)
     ImageView swipeImg;
 
+    /**
+     * Field for input text
+     */
     @BindView(R.id.input_text)
     EditText inputText;
 
+    /**
+     * Field for displaying the translated text
+     */
     @BindView(R.id.tvTranslatedText)
     TextView translatedText;
+
 
     @BindView(R.id.star)
     ImageView starImg;
 
-    PresenterImpl presenter;
+    private PresenterImpl presenter;
 
-    List<String> langsKeys;
+    /**
+     * List of languages keys
+     */
+    private List<String> langsKeys;
 
 
     public TranslateFragment() {
@@ -68,15 +86,16 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
         ButterKnife.bind(this, view);
 
         presenter = new PresenterImpl(this);
+
+        // get languages using Retrofit
         presenter.getLanguages();
 
 
+        swipeImg.setOnClickListener(v -> swapLanguages());
 
-        swipeImg.setOnClickListener(v -> swipeLanguages());
 
-
+        // this will be triggered when user input text
         inputText.addTextChangedListener(new TextWatcher() {
-
 
             Timer timer = new Timer();
             @Override
@@ -96,10 +115,8 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        Realm realm = Realm.getDefaultInstance();
-                        if (realm.where(HistoryElement.class).findAll().contains(editable)) {
-                            showTranslatedText(editable.toString());
-                        }
+                        if (langsKeys == null) return;
+                        // set in spinner langs values, but using langs keys for query
                         int position = spinnerTo.getSelectedItemPosition();
                         presenter.getTranslate(editable.toString(), langsKeys.get(position));
                     }
@@ -116,15 +133,19 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
         return view;
     }
 
+    /**
+     * This method shows languages in two spinners
+     * @param list - model class containing map with langs
+     */
     @Override
     public void showLanguages(LanguagesList list) {
 
         Map<String, String> map = list.getLangs();
-        ArrayList<String> langs = new ArrayList<>(map.values());
+        List<String> langsValues = new ArrayList<>(map.values());
         langsKeys = new ArrayList<>(map.keySet());
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_spinner_item, langs);
+                android.R.layout.simple_spinner_item, langsValues);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         spinnerFrom.setAdapter(adapter);
@@ -133,12 +154,25 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
 
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.onStop();
+    }
+
+    /**
+     * This method shows translated text
+     * @param text - translated text to display in TextView
+     */
+    @Override
     public void showTranslatedText(String text) {
         translatedText.setText(text);
         starImg.setVisibility(View.VISIBLE);
     }
 
-    private void swipeLanguages() {
+    /**
+     * This method swaps languages selected in spinners
+     */
+    private void swapLanguages() {
         int firstSpinnerIndex = spinnerFrom.getSelectedItemPosition();
         spinnerFrom.setSelection(spinnerTo.getSelectedItemPosition());
         spinnerTo.setSelection(firstSpinnerIndex);
