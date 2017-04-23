@@ -15,6 +15,7 @@
         android:id="@+id/original_text"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:textColor="@color/translatedTextColor"
         android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

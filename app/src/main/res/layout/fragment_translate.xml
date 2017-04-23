@@ -60,22 +60,22 @@
 
     <TextView
         android:id="@+id/tvTranslatedText"
-        android:layout_below="@id/input_text"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
+        android:layout_below="@id/input_text"
         android:layout_marginTop="20dp"
-        tools:text="translated text"/>
+        android:textSize="18sp"
+        android:textColor="@color/translatedTextColor"
+        tools:text="translated text" />
 
     <ImageView
         android:id="@+id/star"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/star"
-        android:layout_toEndOf="@id/tvTranslatedText"
-        android:layout_below="@id/input_text"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/unpressed_star"
         android:visibility="invisible"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription"
+        android:layout_below="@+id/input_text"
+        android:layout_alignEnd="@+id/lang_layout" />
 
 </RelativeLayout>

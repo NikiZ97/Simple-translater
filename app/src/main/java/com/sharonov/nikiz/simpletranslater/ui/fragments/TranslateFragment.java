@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sharonov.nikiz.simpletranslater.R;
 import com.sharonov.nikiz.simpletranslater.model.data.HistoryElement;
@@ -106,7 +107,11 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
             }
         });
 
-        starImg.setOnClickListener(v -> presenter.onStarred());
+        starImg.setOnClickListener(v -> {
+            presenter.onStarred();
+            starImg.setImageResource(R.drawable.pressed_star);
+            Toast.makeText(getContext(), R.string.added_to_favorites, Toast.LENGTH_SHORT).show();
+        });
 
         return view;
     }

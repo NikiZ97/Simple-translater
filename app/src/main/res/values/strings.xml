@@ -21,5 +21,6 @@
     <string name="open_drawer">open drawer</string>
     <string name="close_drawer">close drawer</string>
     <string name="input_text">Input text</string>
+    <string name="added_to_favorites">Добавлено в избранное</string>
 
 </resources>
