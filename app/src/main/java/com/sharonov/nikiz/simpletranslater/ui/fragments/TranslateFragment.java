@@ -1,7 +1,10 @@
 package com.sharonov.nikiz.simpletranslater.ui.fragments;
 
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +31,8 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.view.View.GONE;
 
 
 public class TranslateFragment extends Fragment implements com.sharonov.nikiz.simpletranslater.ui.View {
@@ -66,6 +72,9 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
     @BindView(R.id.star)
     ImageView starImg;
 
+    @BindView(R.id.loading_progress_bar)
+    ProgressBar progressBar;
+
     private PresenterImpl presenter;
 
     /**
@@ -77,6 +86,18 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
     public TranslateFragment() {
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+//        setRetainInstance(true);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+//        outState.putString("text", translatedText.toString());
+//        outState.putString("input", inputText.getText().toString());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,6 +110,14 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
 
         // get languages using Retrofit
         presenter.getLanguages();
+
+        /*if (savedInstanceState != null) {
+            translatedText.setText(savedInstanceState.getString("text"));
+            inputText.setText(savedInstanceState.getString("input"));
+        }*/
+
+        progressBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#d2bd1d"),
+                PorterDuff.Mode.MULTIPLY);
 
 
         swipeImg.setOnClickListener(v -> swapLanguages());
@@ -150,6 +179,9 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
 
         spinnerFrom.setAdapter(adapter);
         spinnerTo.setAdapter(adapter);
+
+        spinnerFrom.setSelection(69);
+        spinnerTo.setSelection(16);
     }
 
 
@@ -167,6 +199,16 @@ public class TranslateFragment extends Fragment implements com.sharonov.nikiz.si
     public void showTranslatedText(String text) {
         translatedText.setText(text);
         starImg.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressBar() {
+        progressBar.setVisibility(GONE);
     }
 
     /**

@@ -48,11 +48,13 @@ public class PresenterImpl implements Presenter {
      */
     @Override
     public void getTranslate(String text, String languageTo) {
+//        view.showProgressBar();
         apiInterface.getTranslate(ApiInterface.API_KEY, text, languageTo)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(translatedText -> {
                     addToHistory(text, translatedText.getText().get(0));
+                    view.hideProgressBar();
                     view.showTranslatedText(translatedText.getText().get(0));
                 }, this::processError);
     }

@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         checkInternetConnection();
+        toolbar.setTitle(toolbarTitles[NAV_ITEM_INDEX]);
     }
 
     /**

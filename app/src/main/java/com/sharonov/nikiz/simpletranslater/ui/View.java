@@ -6,4 +6,6 @@ import com.sharonov.nikiz.simpletranslater.model.data.LanguagesList;
 public interface View {
     void showLanguages(LanguagesList list);
     void showTranslatedText(String text);
+    void showProgressBar();
+    void hideProgressBar();
 }

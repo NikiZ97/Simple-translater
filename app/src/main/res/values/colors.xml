@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#dcd219</color>
-    <color name="colorPrimaryDark">#dcd219</color>
+    <color name="colorPrimaryDark">#d2bd1d</color>
     <color name="colorAccent">#FF4081</color>
     <color name="translatedTextColor">#111111</color>
+    <color name="translate_edit_text_default_gray">#cccccc</color>
 </resources>
